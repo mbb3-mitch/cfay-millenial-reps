@@ -14,7 +14,6 @@ exports.create = (req, res) => {
     // Create a Exercise
     const exercise = new Exercise({
         name: req.body.name,
-        reps: req.body.reps,
     });
 
     // Save Exercise in the database

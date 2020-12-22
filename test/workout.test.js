@@ -1,52 +1,91 @@
-const mongoose = require('mongoose')
 const _db = require("../app/models");
 const Exercise = _db.exercises;
-// const Set = _db.exercises;
-// const Workout = _db.exercises;
+const Set = _db.sets;
+const Workout = _db.workouts;
 
-async function removeAllCollections() {
-    const collections = Object.keys(mongoose.connection.collections)
-    for (const collectionName of collections) {
-        const collection = mongoose.connection.collections[collectionName]
-        await collection.deleteMany()
-    }
-}
+const {setupDB} = require('./test-setup');
+
 
 describe('insert', () => {
 
+    setupDB('endpoint-testing')
 
-    beforeAll(async () => {
-        _db.mongoose
-            .connect(_db.url, {
-                useNewUrlParser: true,
-                useUnifiedTopology: true
-            })
-            .then(() => {
-                console.log("Connected to the database!");
-            })
-            .catch(err => {
-                console.log("Cannot connect to the database!", err);
-                process.exit();
-            });
-    });
-
-    afterEach(async () => {
-        await removeAllCollections()
-    })
-
-    test('Should create an exercise', ()=>{
+    test('Should create an exercise', async () => {
         const expected_name = 'Push Ups'
-        const pushups = new Exercise({
-            name: expected_name,
-        })
 
-        pushups.save().then(() => {
-            Exercise.findOne({name: expected_name}).then((record) => {
-                expect(record.name).toBe(expected_name)
-            })
-        })
+        // Create a Exercise
+        const exercise = new Exercise({
+            name: expected_name,
+        });
+
+        // Save Exercise in the database
+        await exercise.save()
+        const foundExercise = await Exercise.findOne({name: expected_name})
+        expect(foundExercise.name).toBe(expected_name)
     })
 
+    test('Should create an exercise set', async () => {
+        const expected_name = 'Push Ups'
+
+        // Create a Exercise
+        const exercise = new Exercise({
+            name: expected_name,
+        });
+
+        // Save Exercise in the database
+        await exercise.save()
+        const foundExercise = await Exercise.findOne({name: expected_name})
+        expect(foundExercise.name).toBe(expected_name)
+        // Create a Exercise
+        const set = new Set({
+            exercise_id: foundExercise.id,
+            reps: 25,
+        });
+
+        // Save Exercise in the database
+        await set.save()
+        const foundSet = await Set.findOne({exercise_id: foundExercise.id})
+        expect(foundSet.reps).toBe(25)
+
+    })
+    test('Should create a workout', async () => {
+        const expected_name = 'Push Ups'
+
+        // Create a Exercise
+        const exercise = new Exercise({
+            name: expected_name,
+        });
+
+        // Save Exercise in the database
+        await exercise.save()
+        const foundExercise = await Exercise.findOne({name: expected_name})
+        expect(foundExercise.name).toBe(expected_name)
+
+        // Create an Exercise Set
+        const set = new Set({
+            exercise_id: foundExercise.id,
+            reps: 25,
+        });
+
+        // Save Set in the database
+        await set.save()
+        const foundSet = await Set.findOne({exercise_id: foundExercise.id})
+        expect(foundSet.reps).toBe(25)
+
+        // Create a workout
+        const expected_workout_name = 'My good old workout';
+        const workout = new Workout({
+            name: expected_workout_name,
+            sets: foundSet.id,
+            duration: 600,
+        });
+
+        // Save Exercise in the database
+        await workout.save()
+        const foundWorkout = await Workout.findOne({name: expected_workout_name})
+        expect(foundWorkout.name).toBe(expected_workout_name)
+        expect(foundWorkout.toJSON().sets).toEqual([foundSet.toJSON().id])
+    })
 
 });
 
