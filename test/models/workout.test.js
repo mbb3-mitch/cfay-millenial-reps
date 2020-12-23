@@ -1,4 +1,4 @@
-const _db = require("../app/models");
+const _db = require("../../app/models");
 const Exercise = _db.exercises;
 const Set = _db.sets;
 const Workout = _db.workouts;
