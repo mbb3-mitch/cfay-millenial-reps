@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 mongoose.set('useCreateIndex', true)
 mongoose.promise = global.Promise
 
-async function removeAllCollections () {
+async function removeAllCollections() {
     const collections = Object.keys(mongoose.connection.collections)
     for (const collectionName of collections) {
         const collection = mongoose.connection.collections[collectionName]
@@ -11,7 +11,7 @@ async function removeAllCollections () {
     }
 }
 
-async function dropAllCollections () {
+async function dropAllCollections() {
     const collections = Object.keys(mongoose.connection.collections)
     for (const collectionName of collections) {
         const collection = mongoose.connection.collections[collectionName]
@@ -28,12 +28,18 @@ async function dropAllCollections () {
     }
 }
 
+const _db = require("../app/models");
+const testDB = _db.test;
+
 module.exports = {
-    setupDB (databaseName) {
+
+    setupDB() {
         // Connect to Mongoose
         beforeAll(async () => {
-            const url = `mongodb://127.0.0.1/${databaseName}`
-            await mongoose.connect(url, { useNewUrlParser: true })
+            await mongoose.connect(testDB, {
+                useNewUrlParser: true,
+                useUnifiedTopology: true
+            })
         })
 
         // Cleans up database between each test

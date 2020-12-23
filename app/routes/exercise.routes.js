@@ -9,8 +9,6 @@ module.exports = app => {
     // Retrieve all Exercises
     router.get("/", exercises.findAll);
 
-    // Retrieve all published Exercises
-    router.get("/published", exercises.findAllPublished);
 
     // Retrieve a single Exercise with id
     router.get("/:id", exercises.findOne);

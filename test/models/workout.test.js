@@ -3,12 +3,12 @@ const Exercise = _db.exercises;
 const Set = _db.sets;
 const Workout = _db.workouts;
 
-const {setupDB} = require('./test-setup');
+const {setupDB} = require('../test-setup');
 
 
 describe('insert', () => {
 
-    setupDB('endpoint-testing')
+    setupDB()
 
     test('Should create an exercise', async () => {
         const expected_name = 'Push Ups'
