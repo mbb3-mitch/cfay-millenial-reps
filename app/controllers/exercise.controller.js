@@ -31,8 +31,8 @@ exports.create = (req, res) => {
 
 // Retrieve all Exercises from the database.
 exports.findAll = (req, res) => {
-    const title = req.query.title;
-    var condition = title ? { title: { $regex: new RegExp(title), $options: "i" } } : {};
+    const name = req.query.name;
+    var condition = name ? { name: { $regex: new RegExp(name), $options: "i" } } : {};
 
     Exercise.find(condition)
         .then(data => {

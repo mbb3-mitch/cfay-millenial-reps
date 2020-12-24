@@ -60,12 +60,18 @@ describe('controllers-exercise-controller', () => {
     })
     test('Should get all exercises', async () => {
 
-        const res = await request(app)
+        let res = await request(app)
             .get('/api/exercises')
 
         expect(res.statusCode).toEqual(200)
         expect(Array.isArray(res.body)).toBeTruthy()
         expect(res.body.length).toBeGreaterThan(0)
+        res = await request(app)
+            .get('/api/exercises?name=cat')
+
+        expect(res.statusCode).toEqual(200)
+        expect(Array.isArray(res.body)).toBeTruthy()
+        expect(res.body.length).toEqual(0)
 
     })
     test('Should get an exercise with ID', async () => {
@@ -114,7 +120,6 @@ describe('controllers-exercise-controller', () => {
         expect(res.statusCode).toEqual(200)
         expect(res.body.message).toBe(`${expectedDeletedCount} Exercises were deleted successfully!`)
     })
-
 
     test('Should create a set', async () => {
         const foundExercise = await Exercise.findOne({name: 'Handstand'})
