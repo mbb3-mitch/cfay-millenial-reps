@@ -6,4 +6,6 @@ module.exports = app => {
 
     require("./tutorial.routes")(app);
     require("./exercise.routes")(app);
+    require("./exercise.set.routes")(app);
+    require("./workout.routes")(app);
 }

@@ -1,7 +1,6 @@
 const db = require("../models");
 const Exercise = db.exercises;
-const Set = db.sets;
-const Workout = db.workouts;
+
 
 // Create and Save a new Exercise
 exports.create = (req, res) => {
