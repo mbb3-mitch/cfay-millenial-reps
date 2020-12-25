@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
-import ExerciseDataService from "../services/ExerciseService";
+import SetDataService from "../services/SetService";
 import { Link } from "react-router-dom";
 
-const ExercisesList = () => {
-  const [exercises, setExercises] = useState([]);
-  const [currentExercise, setCurrentExercise] = useState(null);
+const SetsList = () => {
+  const [sets, setSets] = useState([]);
+  const [currentSet, setCurrentSet] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(-1);
   const [searchName, setSearchName] = useState("");
 
   useEffect(() => {
-    retrieveExercises();
+    retrieveSets();
   }, []);
 
   const onChangeSearchName = e => {
@@ -17,10 +17,10 @@ const ExercisesList = () => {
     setSearchName(searchName);
   };
 
-  const retrieveExercises = () => {
-    ExerciseDataService.getAll()
+  const retrieveSets = () => {
+    SetDataService.getAll()
       .then(response => {
-        setExercises(response.data);
+        setSets(response.data);
         console.log(response.data);
       })
       .catch(e => {
@@ -29,18 +29,18 @@ const ExercisesList = () => {
   };
 
   const refreshList = () => {
-    retrieveExercises();
-    setCurrentExercise(null);
+    retrieveSets();
+    setCurrentSet(null);
     setCurrentIndex(-1);
   };
 
-  const setActiveExercise = (exercise, index) => {
-    setCurrentExercise(exercise);
+  const setActiveSet = (set, index) => {
+    setCurrentSet(set);
     setCurrentIndex(index);
   };
 
-  const removeAllExercises = () => {
-    ExerciseDataService.removeAll()
+  const removeAllSets = () => {
+    SetDataService.removeAll()
       .then(response => {
         console.log(response.data);
         refreshList();
@@ -51,9 +51,9 @@ const ExercisesList = () => {
   };
 
   const findByName = () => {
-    ExerciseDataService.findByName(searchName)
+    SetDataService.findByName(searchName)
       .then(response => {
-        setExercises(response.data);
+        setSets(response.data);
         console.log(response.data);
       })
       .catch(e => {
@@ -84,45 +84,45 @@ const ExercisesList = () => {
         </div>
       </div>
       <div className="col-md-6">
-        <h4>Exercises List</h4>
+        <h4>Sets List</h4>
 
         <ul className="list-group">
-          {exercises &&
-            exercises.map((exercise, index) => (
+          {sets &&
+            sets.map((set, index) => (
               <li
                 className={
                   "list-group-item " + (index === currentIndex ? "active" : "")
                 }
-                onClick={() => setActiveExercise(exercise, index)}
+                onClick={() => setActiveSet(set, index)}
                 key={index}
               >
-                {exercise.name}
+                {set.name}
               </li>
             ))}
         </ul>
 
         <button
           className="m-3 btn btn-sm btn-danger"
-          onClick={removeAllExercises}
+          onClick={removeAllSets}
         >
           Remove All
         </button>
       </div>
       <div className="col-md-6">
-        {currentExercise ? (
+        {currentSet ? (
           <div>
-            <h4>Exercise</h4>
+            <h4>Set</h4>
             <div>
               <label>
                 <strong>Name:</strong>
               </label>{" "}
-              {currentExercise.name}
+              {currentSet.name}
             </div>
 
 
 
             <Link
-              to={"/exercises/" + currentExercise.id}
+              to={"/sets/" + currentSet.id}
               className="badge badge-warning"
             >
               Edit
@@ -131,7 +131,7 @@ const ExercisesList = () => {
         ) : (
           <div>
             <br />
-            <p>Please click on a Exercise...</p>
+            <p>Please click on a Set...</p>
           </div>
         )}
       </div>
@@ -139,4 +139,4 @@ const ExercisesList = () => {
   );
 };
 
-export default ExercisesList;
+export default SetsList;

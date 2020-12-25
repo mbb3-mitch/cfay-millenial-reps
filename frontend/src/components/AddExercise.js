@@ -5,7 +5,6 @@ const AddExercise = () => {
   const initialExerciseState = {
     id: null,
     name: "",
-    reps: "",
   };
   const [exercise, setExercise] = useState(initialExerciseState);
   const [submitted, setSubmitted] = useState(false);
@@ -18,7 +17,6 @@ const AddExercise = () => {
   const saveExercise = () => {
     var data = {
       name: exercise.name,
-      reps: exercise.reps
     };
 
     ExerciseDataService.create(data)
@@ -26,7 +24,6 @@ const AddExercise = () => {
         setExercise({
           id: response.data.id,
           name: response.data.name,
-          reps: response.data.reps,
         });
         setSubmitted(true);
         console.log(response.data);
@@ -65,18 +62,6 @@ const AddExercise = () => {
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="reps">Reps</label>
-            <input
-              type="text"
-              className="form-control"
-              id="reps"
-              required
-              value={exercise.reps}
-              onChange={handleInputChange}
-              name="reps"
-            />
-          </div>
 
           <button onClick={saveExercise} className="btn btn-success">
             Submit

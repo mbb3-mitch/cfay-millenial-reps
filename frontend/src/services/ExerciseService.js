@@ -24,8 +24,8 @@ const removeAll = () => {
   return http.delete(`/exercises`);
 };
 
-const findByName = title => {
-  return http.get(`/exercises?name=${title}`);
+const findByName = name => {
+  return http.get(`/exercises?name=${name}`);
 };
 
 export default {

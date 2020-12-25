@@ -6,7 +6,11 @@ exports.create = (req, res) => {
     const {exercise_id, reps = 0, duration = 0} = req.body;
     // Validate request
     if (!req.body.exercise_id) {
-        res.status(400).send({message: "Content can not be empty!"});
+        res.status(400).send({message: "Invalid Exercise"});
+        return;
+    }
+    if (!req.body.exercise_id) {
+        res.status(400).send({message: "Invalid Exercise"});
         return;
     }
 
