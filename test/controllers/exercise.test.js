@@ -155,7 +155,7 @@ describe('controllers-exercise-controller', () => {
         expect(res.body.length).toEqual(1)
     })
     test('Should get an set with ID', async () => {
-        const foundSets = await Set.find({});
+        const foundSets = await Set.find({}).populate('exercise_id');
         const foundSet = foundSets[0];
 
 
@@ -164,7 +164,7 @@ describe('controllers-exercise-controller', () => {
 
         expect(res.statusCode).toEqual(200)
         const {exercise_id, reps, duration} = res.body
-        expect(exercise_id).toEqual(foundSet.exercise_id.toJSON())
+        expect(exercise_id._id).toEqual(foundSet.exercise_id.id)
         expect(reps).toEqual(0)
         expect(duration).toEqual(25)
 
@@ -270,7 +270,7 @@ describe('controllers-exercise-controller', () => {
         expect(res.body.length).toEqual(1)
     })
     test('Should get an workout with ID', async () => {
-        const foundWorkouts = await Workout.find({});
+        const foundWorkouts = await Workout.find({}).populate({path: 'sets', populate: {path: 'exercise_id'}});
         const foundWorkout = foundWorkouts[0];
 
 
@@ -281,7 +281,9 @@ describe('controllers-exercise-controller', () => {
         const {name, sets, duration} = res.body
         expect(name).toEqual(foundWorkout.name)
         expect(sets.length).toEqual(foundWorkout.sets.length)
-        sets.forEach((set, index) => expect(set).toEqual(foundWorkout.sets[index].toJSON()) )
+        sets.forEach((set, index) => {
+            expect(set._id).toEqual(foundWorkout.sets[index].id)
+        })
         expect(duration).toEqual(foundWorkout.duration)
 
     })

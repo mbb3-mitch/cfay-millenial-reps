@@ -37,6 +37,7 @@ exports.findAll = (req, res) => {
     const condition = name ? {name} : {};
 
     Workout.find(condition)
+        .populate({path: 'sets', populate: {path: 'exercise_id'}})
         .then(data => {
             res.send(data);
         })
@@ -53,6 +54,7 @@ exports.findOne = (req, res) => {
     const id = req.params.id;
 
     Workout.findById(id)
+        .populate({path: 'sets', populate: {path: 'exercise_id'}})
         .then(data => {
             if (!data)
                 res.status(404).send({message: "Not found Workout with id " + id});

@@ -1,142 +1,152 @@
-import React, { useState, useEffect } from "react";
+import React, {useEffect, useState} from "react";
 import SetDataService from "../services/SetService";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 
 const SetsList = () => {
-  const [sets, setSets] = useState([]);
-  const [currentSet, setCurrentSet] = useState(null);
-  const [currentIndex, setCurrentIndex] = useState(-1);
-  const [searchName, setSearchName] = useState("");
+    const [sets, setSets] = useState([]);
+    const [currentSet, setCurrentSet] = useState(null);
+    const [currentIndex, setCurrentIndex] = useState(-1);
+    const [searchName, setSearchName] = useState("");
 
-  useEffect(() => {
-    retrieveSets();
-  }, []);
 
-  const onChangeSearchName = e => {
-    const searchName = e.target.value;
-    setSearchName(searchName);
-  };
+    useEffect(() => {
+        retrieveSets();
+    }, []);
 
-  const retrieveSets = () => {
-    SetDataService.getAll()
-      .then(response => {
-        setSets(response.data);
-        console.log(response.data);
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  };
+    const onChangeSearchName = e => {
+        const searchName = e.target.value;
+        setSearchName(searchName);
+    };
 
-  const refreshList = () => {
-    retrieveSets();
-    setCurrentSet(null);
-    setCurrentIndex(-1);
-  };
+    const retrieveSets = () => {
+        SetDataService.getAll()
+            .then(response => {
+                setSets(response.data);
+                console.log(response.data);
+            })
+            .catch(e => {
+                console.log(e);
+            });
+    };
 
-  const setActiveSet = (set, index) => {
-    setCurrentSet(set);
-    setCurrentIndex(index);
-  };
+    const refreshList = () => {
+        retrieveSets();
+        setCurrentSet(null);
+        setCurrentIndex(-1);
+    };
 
-  const removeAllSets = () => {
-    SetDataService.removeAll()
-      .then(response => {
-        console.log(response.data);
-        refreshList();
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  };
+    const setActiveSet = (set, index) => {
+        setCurrentSet(set);
+        setCurrentIndex(index);
+    };
 
-  const findByName = () => {
-    SetDataService.findByName(searchName)
-      .then(response => {
-        setSets(response.data);
-        console.log(response.data);
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  };
+    const removeAllSets = () => {
+        SetDataService.removeAll()
+            .then(response => {
+                console.log(response.data);
+                refreshList();
+            })
+            .catch(e => {
+                console.log(e);
+            });
+    };
 
-  return (
-    <div className="list row">
-      <div className="col-md-8">
-        <div className="input-group mb-3">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Search by name"
-            value={searchName}
-            onChange={onChangeSearchName}
-          />
-          <div className="input-group-append">
-            <button
-              className="btn btn-outline-secondary"
-              type="button"
-              onClick={findByName}
-            >
-              Search
-            </button>
-          </div>
-        </div>
-      </div>
-      <div className="col-md-6">
-        <h4>Sets List</h4>
+    const findByName = () => {
+        SetDataService.findByName(searchName)
+            .then(response => {
+                setSets(response.data);
+                console.log(response.data);
+            })
+            .catch(e => {
+                console.log(e);
+            });
+    };
 
-        <ul className="list-group">
-          {sets &&
-            sets.map((set, index) => (
-              <li
-                className={
-                  "list-group-item " + (index === currentIndex ? "active" : "")
-                }
-                onClick={() => setActiveSet(set, index)}
-                key={index}
-              >
-                {set.name}
-              </li>
-            ))}
-        </ul>
-
-        <button
-          className="m-3 btn btn-sm btn-danger"
-          onClick={removeAllSets}
-        >
-          Remove All
-        </button>
-      </div>
-      <div className="col-md-6">
-        {currentSet ? (
-          <div>
-            <h4>Set</h4>
-            <div>
-              <label>
-                <strong>Name:</strong>
-              </label>{" "}
-              {currentSet.name}
+    return (
+        <div className="list row">
+            <div className="col-md-8">
+                <div className="input-group mb-3">
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Search by name"
+                        value={searchName}
+                        onChange={onChangeSearchName}
+                    />
+                    <div className="input-group-append">
+                        <button
+                            className="btn btn-outline-secondary"
+                            type="button"
+                            onClick={findByName}
+                        >
+                            Search
+                        </button>
+                    </div>
+                </div>
             </div>
+            <div className="col-md-6">
+                <h4>Sets List</h4>
+
+                <ul className="list-group">
+                    {sets &&
+                    sets.map((set, index) => (
+                        <li
+                            className={
+                                "list-group-item " + (index === currentIndex ? "active" : "")
+                            }
+                            onClick={() => setActiveSet(set, index)}
+                            key={index}
+                        >
+                            {set.exercise_id.name}
+                            {set.reps ? <p>Reps: {set.reps}</p> : false}
+                            {set.duration ? <p>Duration: {set.duration}</p> : false}
+                        </li>
+                    ))}
+                </ul>
+
+                <button
+                    className="m-3 btn btn-sm btn-danger"
+                    onClick={removeAllSets}
+                >
+                    Remove All
+                </button>
+            </div>
+            <div className="col-md-6">
+                {currentSet ? (
+                    <div>
+                        <h4>Set</h4>
+                        <div>
+                            <p><label>
+                                <strong>Exercise:</strong>
+                            </label>{" "}
+                                {currentSet.exercise_id.name}</p>
+                            <p><label>
+                                <strong>Reps:</strong>
+                            </label>{" "}
+                                {currentSet.reps}</p>
+                            <p><label>
+                                <strong>Duration:</strong>
+                            </label>{" "}
+                                {currentSet.duration} seconds</p>
+                        </div>
 
 
-
-            <Link
-              to={"/sets/" + currentSet.id}
-              className="badge badge-warning"
-            >
-              Edit
-            </Link>
-          </div>
-        ) : (
-          <div>
-            <br />
-            <p>Please click on a Set...</p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+                        <Link
+                            to={"/sets/" + currentSet.id}
+                            className="badge badge-warning"
+                        >
+                            Edit
+                        </Link>
+                    </div>
+                ) : (
+                    <div>
+                        <br/>
+                        <p>Please click on a Set...</p>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
 };
 
 export default SetsList;

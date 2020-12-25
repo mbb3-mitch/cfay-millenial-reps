@@ -1,5 +1,6 @@
 const db = require("../models");
 const Set = db.sets;
+const Exercise = db.exercises;
 
 // Create and Save a new Set
 exports.create = (req, res) => {
@@ -13,6 +14,7 @@ exports.create = (req, res) => {
         res.status(400).send({message: "Invalid Exercise"});
         return;
     }
+
 
     // Create a Set
     const set = new Set({
@@ -41,6 +43,7 @@ exports.findAll = (req, res) => {
     const condition = exercise_id ? {exercise_id} : {};
 
     Set.find(condition)
+        .populate('exercise_id')
         .then(data => {
             res.send(data);
         })
@@ -57,6 +60,7 @@ exports.findOne = (req, res) => {
     const id = req.params.id;
 
     Set.findById(id)
+        .populate('exercise_id')
         .then(data => {
             if (!data)
                 res.status(404).send({message: "Not found Set with id " + id});
