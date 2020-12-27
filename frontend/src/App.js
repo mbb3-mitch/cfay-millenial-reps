@@ -12,6 +12,9 @@ import Exercise from "./components/Exercise";
 import AddSet from "./components/AddSet";
 import SetsList from "./components/SetList";
 import Set from "./components/Set";
+import AddWorkout from "./components/AddWorkout";
+import WorkoutsList from "./components/WorkoutList";
+import Workout from "./components/Workout";
 
 function App() {
     return (
@@ -37,6 +40,11 @@ function App() {
                         </Link>
                     </li>
                     <li className="nav-item">
+                        <Link to={"/workouts"} className="nav-link">
+                            Workouts
+                        </Link>
+                    </li>
+                    <li className="nav-item">
                         <Link to={"/addtutorial"} className="nav-link">
                             Add Tutorial
                         </Link>
@@ -50,6 +58,10 @@ function App() {
                         <Link to={"/addset"} className="nav-link">
                             Add Set
                         </Link>
+                    </li><li className="nav-item">
+                        <Link to={"/addworkout"} className="nav-link">
+                            Add Workout
+                        </Link>
                     </li>
                 </div>
             </nav>
@@ -59,12 +71,15 @@ function App() {
                     <Route exact path={["/", "/tutorials"]} component={TutorialsList}/>
                     <Route exact path={["/exercises"]} component={ExercisesList}/>
                     <Route exact path={["/sets"]} component={SetsList}/>
+                    <Route exact path={["/workouts"]} component={WorkoutsList}/>
                     <Route exact path="/addtutorial" component={AddTutorial}/>
                     <Route exact path="/addexercise" component={AddExercise}/>
                     <Route exact path="/addset" component={AddSet}/>
+                    <Route exact path="/addworkout" component={AddWorkout}/>
                     <Route path="/tutorials/:id" component={Tutorial}/>
                     <Route path="/exercises/:id" component={Exercise}/>
                     <Route path="/sets/:id" component={Set}/>
+                    <Route path="/workouts/:id" component={Workout}/>
                 </Switch>
             </div>
         </div>
