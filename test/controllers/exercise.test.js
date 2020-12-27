@@ -1,7 +1,7 @@
 const request = require('supertest');
 
 const {startServer, app} = require('../../app/server/server')
-startServer(true)
+const server = startServer(true)
 
 const {setupDB} = require('../test-setup');
 
@@ -25,27 +25,31 @@ describe('controllers-exercise-controller', () => {
         await exercise.save()
         const foundExercise = await Exercise.findOne({name: expected_name})
 
-        // Create an Exercise Set
-        const set = new Set({
-            exercise_id: foundExercise.id,
-            duration: 25,
-            reps: 0,
-        });
-
-        // Save Set in the database
-        await set.save()
-        const foundSet = await Set.findOne({exercise_id: foundExercise.id})
 
         // Create a workout
         const expected_workout_name = 'Handstand Workout';
         const workout = new Workout({
             name: expected_workout_name,
-            sets: foundSet.id,
             duration: 600,
         });
 
         // Save Exercise in the database
         await workout.save()
+
+        // Create an Exercise Set
+        const set = new Set({
+            exercise_id: foundExercise.id,
+            duration: 25,
+            reps: 0,
+            workout_id: workout.id
+        });
+
+        // Save Set in the database
+        await set.save()
+    })
+
+    afterAll(async ()=>{
+        server.close()
     })
 
     test('Should create an exercise', async () => {
@@ -226,30 +230,35 @@ describe('controllers-exercise-controller', () => {
 
         const expected_duration = 100;
         const foundExercise = await Exercise.findOne({name: 'Handstand'})
+
+
         let res = await request(app)
+            .post('/api/workouts')
+            .send({
+                name: 'Test workout',
+                duration: expected_duration
+            })
+        expect(res.statusCode).toEqual(200)
+        let {id, name, sets, duration} = res.body
+        expect(name).toBeTruthy()
+        expect(sets.length).toEqual(0)
+        expect(duration).toEqual(expected_duration)
+
+        res = await request(app)
             .post('/api/sets')
             .send({
                 exercise_id: foundExercise.id,
                 reps: 0,
-                duration: 10
+                duration: 10,
+                workout_id: id,
             })
         expect(res.statusCode).toEqual(200)
+        const set_id = res.body.id;
 
-        let {id: set_id} = res.body
-        res = await request(app)
-            .post('/api/workouts')
-            .send({
-                name: 'Test workout',
-                sets: [set_id],
-                duration: expected_duration
-            })
-        expect(res.statusCode).toEqual(200)
-        let {name, sets, duration} = res.body
-        expect(name).toBeTruthy()
-        expect(sets.length).toEqual(1)
-        expect(sets[0]).toEqual(set_id)
-        expect(duration).toEqual(expected_duration)
-
+        const foundWorkout = await Workout.findById(id).populate('sets')
+        expect(foundWorkout.sets.length).toEqual(1)
+        expect(foundWorkout.sets[0].id).toEqual(set_id)
+        expect(foundWorkout.duration).toEqual(expected_duration)
 
     })
     test('Should get all workouts', async () => {

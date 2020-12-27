@@ -74,7 +74,7 @@ exports.update = (req, res) => {
 
     const id = req.params.id;
 
-    Tutorial.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+    Tutorial.findByIdAndUpdate(id, req.body)
         .then(data => {
             if (!data) {
                 res.status(404).send({

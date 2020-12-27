@@ -25,8 +25,8 @@ module.exports = {
 
 // set port, listen for requests
         const PORT = is_test ? 6969 : (process.env.PORT || 8080);
-        app.listen(PORT, () => {
-            console.log(`Server is running on port ${PORT}.`);
+        return app.listen(PORT, () => {
+            console.debug(`Server is running on port ${PORT}.`);
         });
     },
     app

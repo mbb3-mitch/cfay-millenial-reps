@@ -2,7 +2,7 @@ const db = require("../models");
 const Workout = db.workouts;
 
 // Create and Save a new Workout
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
     const {name, sets = [], duration = 0} = req.body;
     // Validate request
     if (!req.body.name) {
@@ -10,11 +10,17 @@ exports.create = (req, res) => {
         return;
     }
 
+    await Workout.updateMany({ active:true }, { active: false, end: new Date() });
+
+
+
     // Create a Workout
     const workout = new Workout({
         name,
         sets,
-        duration
+        duration,
+        active: true,
+        start: new Date(),
     });
 
     // Save workout in the database
@@ -32,7 +38,7 @@ exports.create = (req, res) => {
 };
 
 // Retrieve all Workouts from the database.
-exports.findAll = (req, res) => {
+exports.findAll = async (req, res) => {
     const {name} = req.query;
     const condition = name ? {name} : {};
 
@@ -50,7 +56,7 @@ exports.findAll = (req, res) => {
 };
 
 // Find a single Workout with an id
-exports.findOne = (req, res) => {
+exports.findOne = async (req, res) => {
     const id = req.params.id;
 
     Workout.findById(id)
@@ -68,7 +74,7 @@ exports.findOne = (req, res) => {
 };
 
 // Update a Workout by the id in the request
-exports.update = (req, res) => {
+exports.update = async (req, res) => {
     if (!req.body) {
         return res.status(400).send({
             message: "Data to update can not be empty!"
@@ -77,7 +83,7 @@ exports.update = (req, res) => {
 
     const id = req.params.id;
 
-    Workout.findByIdAndUpdate(id, req.body, {useFindAndModify: false})
+    Workout.findByIdAndUpdate(id, req.body)
         .then(data => {
             if (!data) {
                 res.status(404).send({
@@ -93,7 +99,7 @@ exports.update = (req, res) => {
 };
 
 // Delete a Workout with the specified id in the request
-exports.delete = (req, res) => {
+exports.delete = async (req, res) => {
     const id = req.params.id;
 
     Workout.findByIdAndRemove(id)
@@ -116,7 +122,7 @@ exports.delete = (req, res) => {
 };
 
 // Delete all Workouts from the database.
-exports.deleteAll = (req, res) => {
+exports.deleteAll = async (req, res) => {
     Workout.deleteMany({})
         .then(data => {
             res.send({

@@ -2,7 +2,10 @@ module.exports = mongoose => {
 
     const exerciseSchema = mongoose.Schema(
         {
-            name: String,
+            name: {
+                type: String,
+                required: true,
+            },
         },
         { timestamps: true }
     );

@@ -3,7 +3,9 @@ module.exports = is_test => {
     db.mongoose
         .connect(is_test ? db.test : db.url, {
             useNewUrlParser: true,
-            useUnifiedTopology: true
+            useFindAndModify: false,
+            useCreateIndex: true,
+            useUnifiedTopology: true,
         })
         .then(() => {
             console.debug("Connected to the database!");

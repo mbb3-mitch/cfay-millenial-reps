@@ -1,10 +1,11 @@
 const db = require("../models");
 const Set = db.sets;
 const Exercise = db.exercises;
+const Workout = db.workouts;
 
 // Create and Save a new Set
-exports.create = (req, res) => {
-    const {exercise_id, reps = 0, duration = 0} = req.body;
+exports.create = async (req, res) => {
+    let {exercise_id, reps = 0, duration = 0, workout_id} = req.body;
     // Validate request
     if (!req.body.exercise_id) {
         res.status(400).send({message: "Invalid Exercise"});
@@ -15,35 +16,55 @@ exports.create = (req, res) => {
         return;
     }
 
+    if (!workout_id) {
+        let activeWorkout = await Workout.findOne({active: true})
+        if (!activeWorkout) {
+            activeWorkout = Workout({
+                name: `Untitled Workout ${new Date().toLocaleString()}`,
+                active: true,
+                start: new Date()
+            })
+        }
+
+        workout_id = activeWorkout.id
+    }
+
 
     // Create a Set
-    const set = new Set({
+    set = new Set({
         exercise_id,
         reps,
-        duration
+        duration,
+        workout_id
     });
 
     // Save set in the database
-    set
-        .save()
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while creating the Set."
-            });
+    try {
+        set = await set.save()
+        await Workout.findByIdAndUpdate(
+            set.workout_id,
+            { $push: { sets: set.id } },
+            { new: true }
+        );
+
+        res.send(set);
+    } catch (err) {
+        res.status(500).send({
+            message:
+                err.message || "Some error occurred while creating the Set."
         });
+    }
+
 };
 
 // Retrieve all Sets from the database.
-exports.findAll = (req, res) => {
-    const {exercise_id} = req.query;
-    const condition = exercise_id ? {exercise_id} : {};
+exports.findAll = async (req, res) => {
+    const {workout_id} = req.query;
+    const condition = workout_id ? {workout_id} : {};
 
     Set.find(condition)
         .populate('exercise_id')
+        .populate('workout_id')
         .then(data => {
             res.send(data);
         })
@@ -56,7 +77,7 @@ exports.findAll = (req, res) => {
 };
 
 // Find a single Set with an id
-exports.findOne = (req, res) => {
+exports.findOne = async (req, res) => {
     const id = req.params.id;
 
     Set.findById(id)
@@ -74,7 +95,7 @@ exports.findOne = (req, res) => {
 };
 
 // Update a Set by the id in the request
-exports.update = (req, res) => {
+exports.update = async (req, res) => {
     if (!req.body) {
         return res.status(400).send({
             message: "Data to update can not be empty!"
@@ -83,7 +104,7 @@ exports.update = (req, res) => {
 
     const id = req.params.id;
 
-    Set.findByIdAndUpdate(id, req.body, {useFindAndModify: false})
+    Set.findByIdAndUpdate(id, req.body)
         .then(data => {
             if (!data) {
                 res.status(404).send({
@@ -99,7 +120,7 @@ exports.update = (req, res) => {
 };
 
 // Delete a Set with the specified id in the request
-exports.delete = (req, res) => {
+exports.delete = async (req, res) => {
     const id = req.params.id;
 
     Set.findByIdAndRemove(id)
@@ -122,7 +143,7 @@ exports.delete = (req, res) => {
 };
 
 // Delete all Sets from the database.
-exports.deleteAll = (req, res) => {
+exports.deleteAll = async (req, res) => {
     Set.deleteMany({})
         .then(data => {
             res.send({

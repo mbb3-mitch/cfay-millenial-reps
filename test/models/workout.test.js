@@ -24,30 +24,6 @@ describe('insert', () => {
         expect(foundExercise.name).toBe(expected_name)
     })
 
-    test('Should create an exercise set', async () => {
-        const expected_name = 'Push Ups'
-
-        // Create a Exercise
-        const exercise = new Exercise({
-            name: expected_name,
-        });
-
-        // Save Exercise in the database
-        await exercise.save()
-        const foundExercise = await Exercise.findOne({name: expected_name})
-        expect(foundExercise.name).toBe(expected_name)
-        // Create a Exercise
-        const set = new Set({
-            exercise_id: foundExercise.id,
-            reps: 25,
-        });
-
-        // Save Exercise in the database
-        await set.save()
-        const foundSet = await Set.findOne({exercise_id: foundExercise.id})
-        expect(foundSet.reps).toBe(25)
-
-    })
     test('Should create a workout', async () => {
         const expected_name = 'Push Ups'
 
@@ -61,22 +37,11 @@ describe('insert', () => {
         const foundExercise = await Exercise.findOne({name: expected_name})
         expect(foundExercise.name).toBe(expected_name)
 
-        // Create an Exercise Set
-        const set = new Set({
-            exercise_id: foundExercise.id,
-            reps: 25,
-        });
-
-        // Save Set in the database
-        await set.save()
-        const foundSet = await Set.findOne({exercise_id: foundExercise.id})
-        expect(foundSet.reps).toBe(25)
 
         // Create a workout
         const expected_workout_name = 'My good old workout';
         const workout = new Workout({
             name: expected_workout_name,
-            sets: foundSet.id,
             duration: 600,
         });
 
@@ -84,7 +49,45 @@ describe('insert', () => {
         await workout.save()
         const foundWorkout = await Workout.findOne({name: expected_workout_name})
         expect(foundWorkout.name).toBe(expected_workout_name)
-        expect(foundWorkout.toJSON().sets).toEqual([foundSet.toJSON().id])
+    })
+
+    test('Should create an exercise set', async () => {
+        const expected_name = 'Push Ups'
+
+        // Create a Exercise
+        const exercise = new Exercise({
+            name: expected_name,
+        });
+
+        // Save Exercise in the database
+        await exercise.save()
+        const foundExercise = await Exercise.findOne({name: expected_name})
+        expect(foundExercise.name).toBe(expected_name)
+
+        // Create a workout
+        const expected_workout_name = 'My good old workout';
+        const workout = new Workout({
+            name: expected_workout_name,
+            duration: 600,
+        });
+
+        // Save Exercise in the database
+        await workout.save()
+        const foundWorkout = await Workout.findOne({name: expected_workout_name})
+        expect(foundWorkout.name).toBe(expected_workout_name)
+
+        // Create an Exercise Set
+        const set = new Set({
+            exercise_id: foundExercise.id,
+            reps: 25,
+            workout_id: foundWorkout.id
+        });
+
+        // Save Set in the database
+        await set.save()
+        const foundSet = await Set.findOne({exercise_id: foundExercise.id})
+        expect(foundSet.reps).toBe(25)
+
     })
 
 });

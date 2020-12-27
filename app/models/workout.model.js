@@ -3,12 +3,18 @@ module.exports = mongoose => {
 
     const workoutSchema = mongoose.Schema(
         {
-            name: String,
+            name: {
+                type: String,
+                required: true,
+            },
             sets: [{
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'exercise_set'
             }],
             duration: Number,
+            active: Boolean,
+            start: Date,
+            end: Date,
         },
         { timestamps: true }
     );

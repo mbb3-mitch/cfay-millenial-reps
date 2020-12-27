@@ -3,10 +3,10 @@ const Exercise = db.exercises;
 
 
 // Create and Save a new Exercise
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
     // Validate request
     if (!req.body.name) {
-        res.status(400).send({ message: "Content can not be empty!" });
+        res.status(400).send({message: "Content can not be empty!"});
         return;
     }
 
@@ -30,9 +30,9 @@ exports.create = (req, res) => {
 };
 
 // Retrieve all Exercises from the database.
-exports.findAll = (req, res) => {
+exports.findAll = async (req, res) => {
     const name = req.query.name;
-    var condition = name ? { name: { $regex: new RegExp(name), $options: "i" } } : {};
+    var condition = name ? {name: {$regex: new RegExp(name), $options: "i"}} : {};
 
     Exercise.find(condition)
         .then(data => {
@@ -47,24 +47,24 @@ exports.findAll = (req, res) => {
 };
 
 // Find a single Exercise with an id
-exports.findOne = (req, res) => {
+exports.findOne = async (req, res) => {
     const id = req.params.id;
 
     Exercise.findById(id)
         .then(data => {
             if (!data)
-                res.status(404).send({ message: "Not found Exercise with id " + id });
+                res.status(404).send({message: "Not found Exercise with id " + id});
             else res.send(data);
         })
         .catch(err => {
             res
                 .status(500)
-                .send({ message: "Error retrieving Exercise with id=" + id });
+                .send({message: "Error retrieving Exercise with id=" + id});
         });
 };
 
 // Update a Exercise by the id in the request
-exports.update = (req, res) => {
+exports.update = async (req, res) => {
     if (!req.body) {
         return res.status(400).send({
             message: "Data to update can not be empty!"
@@ -73,13 +73,13 @@ exports.update = (req, res) => {
 
     const id = req.params.id;
 
-    Exercise.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+    Exercise.findByIdAndUpdate(id, req.body)
         .then(data => {
             if (!data) {
                 res.status(404).send({
                     message: `Cannot update Exercise with id=${id}. Maybe Exercise was not found!`
                 });
-            } else res.send({ message: "Exercise was updated successfully." });
+            } else res.send({message: "Exercise was updated successfully."});
         })
         .catch(err => {
             res.status(500).send({
@@ -89,7 +89,7 @@ exports.update = (req, res) => {
 };
 
 // Delete a Exercise with the specified id in the request
-exports.delete = (req, res) => {
+exports.delete = async (req, res) => {
     const id = req.params.id;
 
     Exercise.findByIdAndRemove(id)
@@ -112,7 +112,7 @@ exports.delete = (req, res) => {
 };
 
 // Delete all Exercises from the database.
-exports.deleteAll = (req, res) => {
+exports.deleteAll = async (req, res) => {
     Exercise.deleteMany({})
         .then(data => {
             res.send({
