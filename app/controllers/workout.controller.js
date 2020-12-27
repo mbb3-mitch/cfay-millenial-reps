@@ -10,8 +10,7 @@ exports.create = async (req, res) => {
         return;
     }
 
-    await Workout.updateMany({ active:true }, { active: false, end: new Date() });
-
+    await Workout.updateMany({active: true}, {active: false, end: new Date()});
 
 
     // Create a Workout
@@ -82,20 +81,44 @@ exports.update = async (req, res) => {
     }
 
     const id = req.params.id;
+    const {active} = req.body;
+    try {
 
-    Workout.findByIdAndUpdate(id, req.body)
-        .then(data => {
-            if (!data) {
-                res.status(404).send({
-                    message: `Cannot update Workout with id=${id}. Maybe Workout was not found!`
-                });
-            } else res.send({message: "Workout was updated successfully."});
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: "Error updating Workout with id=" + id
+        // If workout was active and now is false, set end to now
+        if (active === false) {
+            const workout = await Workout.findById(id);
+            if (workout.active) {
+                body.end = new Date()
+            }
+        }
+
+        if (active === true) {
+            // Set all other active workouts to active false
+            req.body.end = null
+            await Workout.updateMany({
+                active: true,
+                _id: {$ne: id}
+            }, {
+                active: false,
+                end: new Date()
+            })
+
+        }
+
+        const data = await Workout.findByIdAndUpdate(id, req.body)
+        if (!data) {
+            res.status(404).send({
+                message: `Cannot update Workout with id=${id}. Maybe Workout was not found!`
             });
+        } else {
+            res.send({message: "Workout was updated successfully."})
+        }
+
+    } catch (err) {
+        res.status(500).send({
+            message: "Error updating Workout with id=" + id
         });
+    }
 };
 
 // Delete a Workout with the specified id in the request

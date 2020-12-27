@@ -97,9 +97,10 @@ const SetsList = () => {
                             onClick={() => setActiveSet(set, index)}
                             key={index}
                         >
-                            {set.exercise_id.name}
-                            {set.reps ? <p>Reps: {set.reps}</p> : false}
-                            {set.duration ? <p>Duration: {set.duration}</p> : false}
+                            {<div><strong>{set.workout_id.name}</strong></div>}
+                            {<div>{set.exercise_id.name}</div>}
+                            {set.reps ? <div>Reps: {set.reps}</div> : false}
+                            {set.duration ? <div>Duration: {set.duration}</div> : false}
                         </li>
                     ))}
                 </ul>
@@ -114,20 +115,12 @@ const SetsList = () => {
             <div className="col-md-6">
                 {currentSet ? (
                     <div>
-                        <h4>Set</h4>
+                        <h4>Current Set</h4>
                         <div>
-                            <p><label>
-                                <strong>Exercise:</strong>
-                            </label>{" "}
-                                {currentSet.exercise_id.name}</p>
-                            <p><label>
-                                <strong>Reps:</strong>
-                            </label>{" "}
-                                {currentSet.reps}</p>
-                            <p><label>
-                                <strong>Duration:</strong>
-                            </label>{" "}
-                                {currentSet.duration} seconds</p>
+                            {<div><strong>{currentSet.workout_id.name}</strong></div>}
+                            {<div>{currentSet.exercise_id.name}</div>}
+                            {currentSet.reps ? <div>Reps: {currentSet.reps}</div> : false}
+                            {currentSet.duration ? <div>Duration: {currentSet.duration}</div> : false}
                         </div>
 
 

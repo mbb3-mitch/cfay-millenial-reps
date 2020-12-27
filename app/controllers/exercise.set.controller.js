@@ -1,6 +1,5 @@
 const db = require("../models");
 const Set = db.sets;
-const Exercise = db.exercises;
 const Workout = db.workouts;
 
 // Create and Save a new Set
@@ -15,36 +14,36 @@ exports.create = async (req, res) => {
         res.status(400).send({message: "Invalid Exercise"});
         return;
     }
+    try {
+        if (!workout_id) {
+            let activeWorkout = await Workout.findOne({active: true})
+            if (!activeWorkout) {
+                activeWorkout = Workout({
+                    name: `Untitled Workout ${new Date().toLocaleString()}`,
+                    active: true,
+                    start: new Date()
+                })
+            }
 
-    if (!workout_id) {
-        let activeWorkout = await Workout.findOne({active: true})
-        if (!activeWorkout) {
-            activeWorkout = Workout({
-                name: `Untitled Workout ${new Date().toLocaleString()}`,
-                active: true,
-                start: new Date()
-            })
+            workout_id = activeWorkout.id
         }
 
-        workout_id = activeWorkout.id
-    }
 
+        // Create a Set
+        set = new Set({
+            exercise_id,
+            reps,
+            duration,
+            workout_id
+        });
 
-    // Create a Set
-    set = new Set({
-        exercise_id,
-        reps,
-        duration,
-        workout_id
-    });
+        // Save set in the database
 
-    // Save set in the database
-    try {
         set = await set.save()
         await Workout.findByIdAndUpdate(
             set.workout_id,
-            { $push: { sets: set.id } },
-            { new: true }
+            {$push: {sets: set.id}},
+            {new: true}
         );
 
         res.send(set);
@@ -59,8 +58,13 @@ exports.create = async (req, res) => {
 
 // Retrieve all Sets from the database.
 exports.findAll = async (req, res) => {
-    const {workout_id} = req.query;
-    const condition = workout_id ? {workout_id} : {};
+    const {workout} = req.query;
+    let condition = {}
+    if (workout) {
+       const workouts = await Workout.find({name: {$regex: new RegExp(workout), $options: "i"}}, '_id')
+        const workoutIDs = workouts.map(workout=> workout.id);
+       condition = { workout_id: { $in: workoutIDs } }
+    }
 
     Set.find(condition)
         .populate('exercise_id')

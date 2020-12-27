@@ -25,7 +25,7 @@ const removeAll = () => {
 };
 
 const findByName = title => {
-  return http.get(`/sets?name=${title}`);
+  return http.get(`/sets?workout=${title}`);
 };
 
 export default {

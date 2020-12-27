@@ -4,7 +4,6 @@ module.exports = app => {
         res.json({ message: "Welcome to CFAY Millenial Reps." });
     });
 
-    require("./tutorial.routes")(app);
     require("./exercise.routes")(app);
     require("./exercise.set.routes")(app);
     require("./workout.routes")(app);

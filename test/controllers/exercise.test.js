@@ -150,9 +150,16 @@ describe('controllers-exercise-controller', () => {
         expect(Array.isArray(res.body)).toBeTruthy()
         expect(res.body.length).toBeGreaterThan(0)
 
-        const foundExercise = await Exercise.findOne({name: 'Handstand'})
         res = await request(app)
-            .get(`/api/sets?exercise_id=${foundExercise.id}`)
+            .get(`/api/sets?workout=none`)
+
+        expect(res.statusCode).toEqual(200)
+        expect(Array.isArray(res.body)).toBeTruthy()
+        expect(res.body.length).toEqual(0)
+
+
+        res = await request(app)
+            .get(`/api/sets?workout=handstand`)
 
         expect(res.statusCode).toEqual(200)
         expect(Array.isArray(res.body)).toBeTruthy()
