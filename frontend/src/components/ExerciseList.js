@@ -100,13 +100,6 @@ const ExercisesList = () => {
               </li>
             ))}
         </ul>
-
-        <button
-          className="m-3 btn btn-sm btn-danger"
-          onClick={removeAllExercises}
-        >
-          Remove All
-        </button>
       </div>
       <div className="col-md-6">
         {currentExercise ? (

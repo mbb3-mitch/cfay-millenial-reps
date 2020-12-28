@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import SetDataService from "../services/SetService";
 import {Link} from "react-router-dom";
 
-const SetsList = () => {
+const SetsList = (props) => {
     const [sets, setSets] = useState([]);
     const [currentSet, setCurrentSet] = useState(null);
     const [currentIndex, setCurrentIndex] = useState(-1);
@@ -19,40 +19,34 @@ const SetsList = () => {
     };
 
     const retrieveSets = () => {
+        if (props.workoutID) {
+            SetDataService.findByWorkoutID(props.workoutID)
+                .then(response => {
+                    setSets(response.data);
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+            return
+        }
         SetDataService.getAll()
             .then(response => {
                 setSets(response.data);
-                console.log(response.data);
             })
             .catch(e => {
                 console.log(e);
             });
     };
 
-    const refreshList = () => {
-        retrieveSets();
-        setCurrentSet(null);
-        setCurrentIndex(-1);
-    };
 
     const setActiveSet = (set, index) => {
         setCurrentSet(set);
         setCurrentIndex(index);
     };
 
-    const removeAllSets = () => {
-        SetDataService.removeAll()
-            .then(response => {
-                console.log(response.data);
-                refreshList();
-            })
-            .catch(e => {
-                console.log(e);
-            });
-    };
 
     const findByName = () => {
-        SetDataService.findByName(searchName)
+        SetDataService.findByWorkoutName(searchName)
             .then(response => {
                 setSets(response.data);
                 console.log(response.data);
@@ -63,8 +57,8 @@ const SetsList = () => {
     };
 
     return (
-        <div className="list row">
-            <div className="col-md-8">
+        <div className="row text-left">
+            {!props.workoutID && <div className="col-md-8">
                 <div className="input-group mb-3">
                     <input
                         type="text"
@@ -83,9 +77,9 @@ const SetsList = () => {
                         </button>
                     </div>
                 </div>
-            </div>
+            </div>}
             <div className="col-md-6">
-                <h4>Sets List</h4>
+                <h4 className="text-center">Sets List</h4>
 
                 <ul className="list-group">
                     {sets &&
@@ -97,7 +91,7 @@ const SetsList = () => {
                             onClick={() => setActiveSet(set, index)}
                             key={index}
                         >
-                            {<div><strong>{set.workout_id.name}</strong></div>}
+                            {set.workout_id ? <div><strong>{set.workout_id.name}</strong></div> : false}
                             {<div>{set.exercise_id.name}</div>}
                             {set.reps ? <div>Reps: {set.reps}</div> : false}
                             {set.duration ? <div>Duration: {set.duration}</div> : false}
@@ -105,19 +99,13 @@ const SetsList = () => {
                     ))}
                 </ul>
 
-                <button
-                    className="m-3 btn btn-sm btn-danger"
-                    onClick={removeAllSets}
-                >
-                    Remove All
-                </button>
             </div>
             <div className="col-md-6">
                 {currentSet ? (
                     <div>
                         <h4>Current Set</h4>
                         <div>
-                            {<div><strong>{currentSet.workout_id.name}</strong></div>}
+                            {currentSet.workout_id ? <div><strong>{currentSet.workout_id.name}</strong></div> : false}
                             {<div>{currentSet.exercise_id.name}</div>}
                             {currentSet.reps ? <div>Reps: {currentSet.reps}</div> : false}
                             {currentSet.duration ? <div>Duration: {currentSet.duration}</div> : false}

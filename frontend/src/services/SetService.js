@@ -24,8 +24,11 @@ const removeAll = () => {
   return http.delete(`/sets`);
 };
 
-const findByName = title => {
-  return http.get(`/sets?workout=${title}`);
+const findByWorkoutName = name => {
+  return http.get(`/sets?workout=${name}`);
+};
+const findByWorkoutID = id => {
+  return http.get(`/sets?workout_id=${id}`);
 };
 
 export default {
@@ -35,5 +38,6 @@ export default {
   update,
   remove,
   removeAll,
-  findByName
+  findByWorkoutName,
+  findByWorkoutID
 };

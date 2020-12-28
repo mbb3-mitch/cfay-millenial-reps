@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import WorkoutDataService from "../services/WorkoutService";
 
-const AddWorkout = () => {
+const AddWorkout = (props) => {
     const initialWorkoutState = {
         id: null,
         name: "",
@@ -33,7 +33,9 @@ const AddWorkout = () => {
                     duration: response.data.duration,
                 });
                 setSubmitted(true);
-                console.log(response.data);
+                if (props.handleNewWorkoutAdded){
+                    props.handleNewWorkoutAdded()
+                }
             })
             .catch(e => {
                 console.log(e);
@@ -56,6 +58,7 @@ const AddWorkout = () => {
                 </div>
             ) : (
                 <div>
+                    <h2>Start a workout</h2>
                     <div className="form-group">
                         <label htmlFor="name">Name</label>
                         <input
@@ -67,7 +70,6 @@ const AddWorkout = () => {
                             onChange={handleInputChange}
                             name="name"
                         />
-
                     </div>
 
                     <button onClick={saveWorkout} className="btn btn-success">

@@ -9,7 +9,6 @@ import Exercise from "./components/Exercise";
 import AddSet from "./components/AddSet";
 import SetsList from "./components/SetList";
 import Set from "./components/Set";
-import AddWorkout from "./components/AddWorkout";
 import WorkoutsList from "./components/WorkoutList";
 import Workout from "./components/Workout";
 
@@ -60,7 +59,6 @@ function App() {
                     <Route exact path={["/","/workouts"]} component={WorkoutsList}/>
                     <Route exact path="/addexercise" component={AddExercise}/>
                     <Route exact path="/addset" component={AddSet}/>
-                    <Route exact path="/addworkout" component={AddWorkout}/>
                     <Route path="/exercises/:id" component={Exercise}/>
                     <Route path="/sets/:id" component={Set}/>
                     <Route path="/workouts/:id" component={Workout}/>

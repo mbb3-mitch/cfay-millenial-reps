@@ -2,15 +2,19 @@ import React, {useEffect, useState} from "react";
 import WorkoutDataService from "../services/WorkoutService";
 import {Link} from "react-router-dom";
 
+import AddWorkout from "./AddWorkout"
+
 const WorkoutsList = () => {
     const [workouts, setWorkouts] = useState([]);
     const [currentWorkout, setCurrentWorkout] = useState(null);
     const [currentIndex, setCurrentIndex] = useState(-1);
     const [searchName, setSearchName] = useState("");
+    const [addWorkoutForm, setAddWorkoutForm] = useState(false);
 
     useEffect(() => {
+        if (currentWorkout || workouts.length) return;
         retrieveWorkouts();
-    }, []);
+    }, [workouts, currentWorkout]);
 
     const onChangeSearchName = e => {
         const searchName = e.target.value;
@@ -21,7 +25,8 @@ const WorkoutsList = () => {
         WorkoutDataService.getAll()
             .then(response => {
                 setWorkouts(response.data);
-                console.log(response.data);
+                setCurrentWorkout(response.data.find(workout => workout.active))
+                setCurrentIndex(response.data.findIndex(workout => workout.active))
             })
             .catch(e => {
                 console.log(e);
@@ -61,6 +66,10 @@ const WorkoutsList = () => {
             });
     };
 
+    const handleNewWorkoutAdded = ()=>{
+        retrieveWorkouts()
+        setAddWorkoutForm(false)
+    }
     return (
         <div className="list row">
             <div className="col-md-8">
@@ -100,13 +109,13 @@ const WorkoutsList = () => {
                         </li>
                     ))}
                 </ul>
-
-                <button
-                    className="m-3 btn btn-sm btn-danger"
-                    onClick={removeAllWorkouts}
-                >
-                    Remove All
+                {!addWorkoutForm &&
+                <button onClick={() => {
+                    setAddWorkoutForm(true)
+                }} className="btn btn-success mt-2">
+                    New workout
                 </button>
+                }
             </div>
             <div className="col-md-6">
                 {currentWorkout ? (
@@ -147,6 +156,12 @@ const WorkoutsList = () => {
                     </div>
                 )}
             </div>
+            {addWorkoutForm &&
+            <div className="col-md-12">
+                <AddWorkout handleNewWorkoutAdded={handleNewWorkoutAdded}/>
+            </div>
+            }
+
         </div>
     );
 };
