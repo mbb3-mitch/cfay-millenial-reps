@@ -2,10 +2,7 @@ import React, { useState, useEffect } from "react";
 import ExerciseDataService from "../services/ExerciseService";
 
 const Exercise = props => {
-  const initialExerciseState = {
-    id: null,
-    name: "",
-  };
+  const initialExerciseState = null;
   const [currentExercise, setCurrentExercise] = useState(initialExerciseState);
   const [message, setMessage] = useState("");
 

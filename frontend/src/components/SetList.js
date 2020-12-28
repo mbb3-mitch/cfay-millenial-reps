@@ -1,24 +1,17 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import SetDataService from "../services/SetService";
 import {Link} from "react-router-dom";
+import AddSet from "./AddSet";
 
 const SetsList = (props) => {
     const [sets, setSets] = useState([]);
     const [currentSet, setCurrentSet] = useState(null);
     const [currentIndex, setCurrentIndex] = useState(-1);
     const [searchName, setSearchName] = useState("");
+    const [addSetForm, setAddSetForm] = useState(false);
 
-
-    useEffect(() => {
-        retrieveSets();
-    }, []);
-
-    const onChangeSearchName = e => {
-        const searchName = e.target.value;
-        setSearchName(searchName);
-    };
-
-    const retrieveSets = () => {
+    const retrieveSets = useCallback(() => {
+        console.log(props)
         if (props.workoutID) {
             SetDataService.findByWorkoutID(props.workoutID)
                 .then(response => {
@@ -36,7 +29,17 @@ const SetsList = (props) => {
             .catch(e => {
                 console.log(e);
             });
+    },[props]);
+    useEffect(() => {
+        retrieveSets();
+    }, [retrieveSets]);
+
+    const onChangeSearchName = e => {
+        const searchName = e.target.value;
+        setSearchName(searchName);
     };
+
+
 
 
     const setActiveSet = (set, index) => {
@@ -55,6 +58,11 @@ const SetsList = (props) => {
                 console.log(e);
             });
     };
+
+    const handleNewSetAdded = ()=>{
+        retrieveSets()
+        setAddSetForm(false)
+    }
 
     return (
         <div className="row text-left">
@@ -82,21 +90,23 @@ const SetsList = (props) => {
                 <h4 className="text-center">Sets List</h4>
 
                 <ul className="list-group">
-                    {sets &&
-                    sets.map((set, index) => (
-                        <li
-                            className={
-                                "list-group-item " + (index === currentIndex ? "active" : "")
-                            }
-                            onClick={() => setActiveSet(set, index)}
-                            key={index}
-                        >
-                            {set.workout_id ? <div><strong>{set.workout_id.name}</strong></div> : false}
-                            {<div>{set.exercise_id.name}</div>}
-                            {set.reps ? <div>Reps: {set.reps}</div> : false}
-                            {set.duration ? <div>Duration: {set.duration}</div> : false}
-                        </li>
-                    ))}
+                    {sets && sets.length ?
+                        (sets.map((set, index) => (
+                            <li
+                                className={
+                                    "list-group-item " + (index === currentIndex ? "active" : "")
+                                }
+                                onClick={() => setActiveSet(set, index)}
+                                key={index}
+                            >
+                                {set.workout_id ? <div><strong>{set.workout_id.name}</strong></div> : false}
+                                {<div>{set.exercise_id.name}</div>}
+                                {set.reps ? <div>Reps: {set.reps}</div> : false}
+                                {set.duration ? <div>Duration: {set.duration}</div> : false}
+                            </li>
+                        ))) : (
+                            <li className="list-group-item">No sets have been created.</li>
+                        )}
                 </ul>
 
             </div>
@@ -122,10 +132,22 @@ const SetsList = (props) => {
                 ) : (
                     <div>
                         <br/>
-                        <p>Please click on a Set...</p>
+                        {sets && sets.length ? <p>Please click on a Set...</p> : false}
                     </div>
                 )}
             </div>
+            {!addSetForm && props.workoutID && props.workoutActive &&
+            <button onClick={() => {
+                setAddSetForm(true)
+            }} className="btn btn-success mt-3">
+                Create set
+            </button>
+            }
+            {addSetForm &&
+            <div className="col-md-12">
+                <AddSet handleNewSetAdded={handleNewSetAdded}/>
+            </div>
+            }
         </div>
     );
 };

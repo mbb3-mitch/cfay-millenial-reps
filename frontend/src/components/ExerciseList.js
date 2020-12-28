@@ -28,27 +28,12 @@ const ExercisesList = () => {
       });
   };
 
-  const refreshList = () => {
-    retrieveExercises();
-    setCurrentExercise(null);
-    setCurrentIndex(-1);
-  };
 
   const setActiveExercise = (exercise, index) => {
     setCurrentExercise(exercise);
     setCurrentIndex(index);
   };
 
-  const removeAllExercises = () => {
-    ExerciseDataService.removeAll()
-      .then(response => {
-        console.log(response.data);
-        refreshList();
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  };
 
   const findByName = () => {
     ExerciseDataService.findByName(searchName)

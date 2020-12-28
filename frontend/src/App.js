@@ -44,10 +44,6 @@ function App() {
                         <Link to={"/addset"} className="nav-link">
                             Add Set
                         </Link>
-                    </li><li className="nav-item">
-                        <Link to={"/addworkout"} className="nav-link">
-                            Add Workout
-                        </Link>
                     </li>
                 </div>
             </nav>

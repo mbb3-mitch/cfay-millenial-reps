@@ -48,7 +48,7 @@ const AddWorkout = (props) => {
     };
 
     return (
-        <div className="submit-form">
+        <div className="col-md-6 mt-5">
             {submitted ? (
                 <div>
                     <h4>You submitted successfully!</h4>
@@ -58,7 +58,7 @@ const AddWorkout = (props) => {
                 </div>
             ) : (
                 <div>
-                    <h2>Start a workout</h2>
+                    <h2>Create a workout</h2>
                     <div className="form-group">
                         <label htmlFor="name">Name</label>
                         <input
@@ -73,7 +73,7 @@ const AddWorkout = (props) => {
                     </div>
 
                     <button onClick={saveWorkout} className="btn btn-success">
-                        Submit
+                        Begin
                     </button>
                 </div>
             )}

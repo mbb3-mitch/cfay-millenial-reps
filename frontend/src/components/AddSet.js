@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import SetDataService from "../services/SetService";
 import ExerciseDataService from "../services/ExerciseService";
 
-const AddSet = () => {
+const AddSet = (props) => {
 
     const initialSetState = {
         id: null,
@@ -16,7 +16,7 @@ const AddSet = () => {
     useEffect(() => {
         ExerciseDataService.getAll()
             .then(response => {
-                if (set.exercise_id){
+                if (set.exercise_id) {
                     console.log(set);
                     return;
                 }
@@ -52,8 +52,9 @@ const AddSet = () => {
                     duration: response.data.duration,
                 });
                 setSubmitted(true);
-                console.log(response.data);
-            })
+                if (props.handleNewSetAdded){
+                    props.handleNewSetAdded()
+                }            })
             .catch(e => {
                 console.log(e);
             });
@@ -65,7 +66,8 @@ const AddSet = () => {
     };
 
     return (
-        <div className="submit-form">
+        <div className="col-md-6 mt-5">
+
             {submitted ? (
                 <div>
                     <h4>You submitted successfully!</h4>
@@ -76,6 +78,7 @@ const AddSet = () => {
             ) : (
                 <div>
                     <div className="form-group">
+                        <h2>Add a set</h2>
                         <label htmlFor="exercise_id">Exercise</label>
                         <select
                             className="form-control"
@@ -110,13 +113,11 @@ const AddSet = () => {
                             onChange={handleInputChange}
                             name="duration"
                         />
-
-
                     </div>
 
 
                     <button onClick={saveSet} className="btn btn-success">
-                        Submit
+                        Create
                     </button>
                 </div>
             )}

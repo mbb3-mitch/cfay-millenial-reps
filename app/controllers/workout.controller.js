@@ -1,5 +1,6 @@
 const db = require("../models");
 const Workout = db.workouts;
+const Set = db.sets;
 
 // Create and Save a new Workout
 exports.create = async (req, res) => {
@@ -126,9 +127,9 @@ exports.delete = async (req, res) => {
     const id = req.params.id;
 
     try {
-        await Set.remove({workout_id: id});
+        await Set.deleteMany({workout_id: id});
         const data = await Workout.findByIdAndRemove(id);
-        if (!data){
+        if (!data) {
             res.status(404).send({
                 message: `Cannot delete Workout with id=${id}. Maybe Workout was not found.`
             })
@@ -137,27 +138,12 @@ exports.delete = async (req, res) => {
                 message: "Workout was deleted successfully!"
             })
         }
-    } catch (err){
+    } catch (err) {
         res.status(500).send({
             message: "Could not delete Workout with id=" + id
         });
     }
 
-    Workout.findByIdAndRemove(id)
-        .then(data => {
-            if (!data) {
-                res.status(404).send({
-                    message: `Cannot delete Workout with id=${id}. Maybe Workout was not found!`
-                });
-            } else {
-                res.send({
-                    message: "Workout was deleted successfully!"
-                });
-            }
-        })
-        .catch(err => {
-
-        });
 };
 
 // Delete all Workouts from the database.

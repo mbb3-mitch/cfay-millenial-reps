@@ -4,12 +4,7 @@ import moment from 'moment';
 import SetsList from "./SetList";
 
 const Workout = props => {
-    const initialWorkoutState = {
-        id: null,
-        name: "",
-        sets: [],
-        active: false,
-    };
+    const initialWorkoutState = null;
     const [currentWorkout, setCurrentWorkout] = useState(initialWorkoutState);
     const [editWorkout, setEditWorkout] = useState(false);
     const [message, setMessage] = useState("");
@@ -68,7 +63,7 @@ const Workout = props => {
     }
 
     return (
-        <div className="col-md-12">
+        <div >
             {currentWorkout ? (
                 <div className="text-center">
                     <div className="workout__title d-inline">
@@ -166,15 +161,8 @@ const Workout = props => {
                         }
                     </div>
 
-
-
-
-
-
-
-
-                    <div className="workout__set-list m-5">
-                        <SetsList workoutID={currentWorkout.id}/>
+                    <div className="workout__set-list mt-5">
+                        <SetsList workoutID={currentWorkout.id} workoutActive={currentWorkout.active}/>
                     </div>
 
 

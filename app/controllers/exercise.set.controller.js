@@ -58,13 +58,16 @@ exports.create = async (req, res) => {
 
 // Retrieve all Sets from the database.
 exports.findAll = async (req, res) => {
-    const {workout} = req.query;
+    const {workout, workout_id} = req.query;
     let condition = {}
-    if (workout) {
-       const workouts = await Workout.find({name: {$regex: new RegExp(workout), $options: "i"}}, '_id')
-        const workoutIDs = workouts.map(workout=> workout.id);
-       condition = { workout_id: { $in: workoutIDs } }
+    if (workout_id) {
+        condition = {workout_id};
+    } else if (workout) {
+        const workouts = await Workout.find({name: {$regex: new RegExp(workout), $options: "i"}}, '_id')
+        const workoutIDs = workouts.map(workout => workout.id);
+        condition = {workout_id: {$in: workoutIDs}}
     }
+
 
     Set.find(condition)
         .populate('exercise_id')
@@ -78,7 +81,8 @@ exports.findAll = async (req, res) => {
                     err.message || "Some error occurred while retrieving sets."
             });
         });
-};
+}
+;
 
 // Find a single Set with an id
 exports.findOne = async (req, res) => {

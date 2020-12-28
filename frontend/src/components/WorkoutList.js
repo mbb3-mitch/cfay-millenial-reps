@@ -33,27 +33,12 @@ const WorkoutsList = () => {
             });
     };
 
-    const refreshList = () => {
-        retrieveWorkouts();
-        setCurrentWorkout(null);
-        setCurrentIndex(-1);
-    };
 
     const setActiveWorkout = (workout, index) => {
         setCurrentWorkout(workout);
         setCurrentIndex(index);
     };
 
-    const removeAllWorkouts = () => {
-        WorkoutDataService.removeAll()
-            .then(response => {
-                console.log(response.data);
-                refreshList();
-            })
-            .catch(e => {
-                console.log(e);
-            });
-    };
 
     const findByName = () => {
         WorkoutDataService.findByName(searchName)
@@ -112,7 +97,7 @@ const WorkoutsList = () => {
                 {!addWorkoutForm &&
                 <button onClick={() => {
                     setAddWorkoutForm(true)
-                }} className="btn btn-success mt-2">
+                }} className="btn btn-success mt-3">
                     New workout
                 </button>
                 }
